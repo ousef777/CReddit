@@ -9,18 +9,18 @@ router.get('/posts', (req, res) => {
 });
 
 router.get('/posts/:id', (req, res) => {
-    const post = posts.find(el => el.id === +req.params.id)
-    if (!post) res.status(404).send("Not Found");
+    const post = posts.find(el => el.id == req.params.id)
+    if (!post) res.status(404).json({ message: `Post with ID ${req.params.id} not found` });
     else res.status(200).json(post);
 });
 
 router.post('/posts', (req, res) => {
     const title = req.body.title;
     const description = req.body.description;
-    if (!title) res.status(400).send("Missing title");
-    else if (!description) res.status(400).send("Missing description");
-    else if (typeof title !== "string") res.status(400).send("title incorrect type");
-    else if (typeof description !== "string") res.status(400).send("description incorrect type");
+    if (!title) res.status(400).json({ message: "Missing Title" });
+    else if (!description) res.status(400).json({ message: "Missing Description" });
+    else if (typeof title !== "string") res.status(400).json({ message: "Title incorrect type" });
+    else if (typeof description !== "string") res.status(400).json({ message: "Description incorrect type" });
     else {
         const post = {
             id: 0,
@@ -33,8 +33,8 @@ router.post('/posts', (req, res) => {
 });
 
 router.delete('/posts/:id', (req, res) => {
-    const post = posts.findIndex(el => el.id === +req.params.id)
-    if (!post) res.status(404).send("Not Found");
+    const post = posts.findIndex(el => el.id == req.params.id)
+    if (post == -1) res.status(404).json({ message: `Post with ID ${req.params.id} not found` });
     else {
         posts.splice(post, 1);
         res.status(200).json({ message: "Post has been deleted successfully" });
@@ -43,14 +43,14 @@ router.delete('/posts/:id', (req, res) => {
 
 //Add comment
 router.post('/posts/:id/comments', (req, res) => {
-    const post = posts.find(el => el.id === +req.params.id)
-    if (!post) res.status(404).send("Not Found");
+    const post = posts.find(el => el.id == req.params.id)
+    if (!post) res.status(404).json({ message: "Post not found" });
     const user = req.body.user;
     const comment = req.body.comment;
-    if (!user) res.status(400).send("Missing user");
-    else if (!comment) res.status(400).send("Missing comment");
-    else if (typeof user !== "string") res.status(400).send("user incorrect type");
-    else if (typeof comment !== "string") res.status(400).send("comment incorrect type");
+    if (!user) res.status(400).json({ message: "Missing User" });
+    else if (!comment) res.status(400).json({ message: "Missing Comment" });
+    else if (typeof user !== "string") res.status(400).json({ message: "User incorrect type" });
+    else if (typeof comment !== "string") res.status(400).json({ message: "Comment incorrect type" });
     else {
         post.comments.push({
             id: (post.comments.at(-1).id + 1),
@@ -62,10 +62,10 @@ router.post('/posts/:id/comments', (req, res) => {
 
 //delete comment by id
 router.delete('/posts/comments/:id', (req, res) => {
-    const post = posts.find(post => post.comments.find(comment => comment.id === +req.params.id))
-    if (!post) res.status(404).send("Not Found");
+    const post = posts.find(post => post.comments.find(comment => comment.id == req.params.id))
+    if (!post) res.status(404).json({ message: "Comment not Found" });
     else {
-        post.comments.splice(post.comments.findIndex(comment => comment.id === +req.params.id), 1);
+        post.comments.splice(post.comments.findIndex(comment => comment.id == req.params.id), 1);
         res.status(200).json({ message: "Comment has been deleted successfully" });
     }
 });
