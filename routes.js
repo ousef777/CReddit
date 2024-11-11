@@ -14,6 +14,7 @@ router.get('/posts/:id', (req, res) => {
     else res.status(200).json(post);
 });
 
+//Create a post
 router.post('/posts', (req, res) => {
     const title = req.body.title;
     const description = req.body.description;
@@ -22,13 +23,13 @@ router.post('/posts', (req, res) => {
     else if (typeof title !== "string") res.status(400).json({ message: "Title incorrect type" });
     else if (typeof description !== "string") res.status(400).json({ message: "Description incorrect type" });
     else {
-        const post = {
-            id: 0,
+        const newPost = {
+            id: (posts.at(-1).id + 1),
             ...req.body,
-            posts: []
+            comments: []
         };
-        posts.unshift(post);
-        res.status(200).json(post);
+        posts.push(newPost);
+        res.status(201).json(newPost);
     }
 });
 
